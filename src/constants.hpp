@@ -8,6 +8,8 @@
 #include <glm/glm.hpp>
 
 #define NB_BALL 2000
+#define CENTER_GRAV 0
+#define GLOBAL_SIZE (.02f)
 
 glm::vec3 const G = glm::vec3(0.f, -1.f, 0.f);
 GLfloat const g = 1.f;

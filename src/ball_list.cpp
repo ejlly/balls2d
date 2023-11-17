@@ -66,7 +66,7 @@ void BallList::updateCollisions(float dt, int nbSubs){
 	for(int i(0); i<nbSubs; i++){
 		this->subUpdate(sub_dt);
 	}
-	tree.update();
+	//tree.update();
 }
 
 void BallList::threaded_collision(std::vector<Ball*>& balls){
@@ -132,7 +132,7 @@ void BallList::subUpdate(float sub_dt){
 */
 
 	tree.computePairs();
-	tree.update();
+	//tree.update();
 
 }
 

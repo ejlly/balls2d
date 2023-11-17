@@ -159,11 +159,13 @@ int main(){
 	bool pause=false;
 
     // Game loop
-    while (!glfwWindowShouldClose(win.getaddr())){
+	int add_time = 0;
+	int respec_tree_time = 0;
+    while(!glfwWindowShouldClose(win.getaddr())){
         glfwPollEvents();
 		GLfloat timeValue = glfwGetTime();
-		GLfloat dt = timeValue - lastTime;
-		lastTime = timeValue;
+		//GLfloat dt = timeValue - lastTime;
+		//lastTime = timeValue;
 
         // Clear the colorbuffer
 
@@ -175,20 +177,26 @@ int main(){
 
 		shaderProgram.use();
 
-		if(timeValue - lastAddTime > addTime){
-			maListe.addBall(6);
-			lastAddTime = timeValue;
+		if(add_time > 3){
+			maListe.addBall(10);
+			add_time = 0;
 		}
-
-		/*
-		for(int i(0); i<maListe.nbBall; i++){
-			std::cout << i << " : " << maListe.list[i].pos.x << " " << maListe.list[i].pos.y << std::endl;
+		add_time++;
+		if(respec_tree_time > 100){
+			maListe.tree.update();
+			respec_tree_time = 0;
 		}
-		*/
+		respec_tree_time++;
+		
 
-		maListe.update(dt);
+		GLfloat const timeBeforeUpdate = glfwGetTime();
+		maListe.update(2e-2f);
+		GLfloat const timeUpdate = glfwGetTime() - timeBeforeUpdate;
+
+		std::cout << "time for update : " << timeUpdate << std::endl;
 
 
+		GLfloat const timeBeforePlot = glfwGetTime();
 		for(int i(0); i < maListe.nbBall; i++){
 			Ball& ball = maListe.list[i];
 			shaderProgram.uniform_4x4("model", 1, GL_FALSE, glm::value_ptr(ball.get_model()));
@@ -201,14 +209,15 @@ int main(){
 			glBindVertexArray(0);
 
 			glDepthFunc(GL_LEQUAL); 
-
 		}
+		GLfloat const timePlot = glfwGetTime() - timeBeforePlot;
+		//std::cout << "time for plot : " << timePlot << std::endl;
 
 		//float const timeframe = .16666f;
-		GLfloat timeEndFrame = glfwGetTime();
-		float const timeframe = .1f;
+		//GLfloat timeEndFrame = glfwGetTime();
+		//float const timeframe = .1f;
 
-		float timeTaken = timeEndFrame - timeValue;
+		//float timeTaken = timeEndFrame - timeValue;
 		
 		//std::cout << "\t" << timeTaken << std::endl;
 

@@ -6,8 +6,6 @@
 #include <glm/gtx/norm.hpp>
 #include <iostream>
 
-#define CENTER_GRAV 0
-#define GLOBAL_SIZE .02f
 #if CENTER_GRAV
 #define TMP_DT (5e-3f)
 #else

@@ -55,7 +55,7 @@ Pair_Ball::Pair_Ball(const Pair_Ball& p){
 
 LooseTree::LooseTree(){
 	m_root = nullptr;
-	m_eps = 0.005f;
+	m_eps = GLOBAL_SIZE;
 }
 
 LooseTree::~LooseTree(){
@@ -105,12 +105,10 @@ void LooseTree::update(){
 
 				Node *parent = node->pere;
 				Node *frere = node->getBrother();
-				//TODO : check if there is a difference !!!!
 				Node **parentLink = parent->pere ? (parent == parent->pere->fils[0] 
 							? &parent->pere->fils[0] 
 							: &parent->pere->fils[1])
 					: &m_root;
-				//Node **parentLink = parent->pere ? &parent: &m_root;
 
 				// replace parent with sibling
 				frere->pere = parent->pere ? parent->pere : nullptr; // root has null pere
