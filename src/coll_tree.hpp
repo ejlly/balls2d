@@ -1,5 +1,4 @@
-#ifndef COLLISION_TREE_H
-#define COLLISION_TREE_H
+#pragma once
 
 #include <vector>
 #include "aabb.hpp"
@@ -74,7 +73,3 @@ class LooseTree{
 
 		void print_aux(Node *node, int cur_size);
 };
-
-
-
-#endif

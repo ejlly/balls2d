@@ -160,7 +160,6 @@ int main(){
 
     // Game loop
 	int add_time = 0;
-	int respec_tree_time = 0;
     while(!glfwWindowShouldClose(win.getaddr())){
         glfwPollEvents();
 		GLfloat timeValue = glfwGetTime();
@@ -182,11 +181,6 @@ int main(){
 			add_time = 0;
 		}
 		add_time++;
-		if(respec_tree_time > 100){
-			maListe.tree.update();
-			respec_tree_time = 0;
-		}
-		respec_tree_time++;
 		
 
 		GLfloat const timeBeforeUpdate = glfwGetTime();
@@ -211,7 +205,7 @@ int main(){
 			glDepthFunc(GL_LEQUAL); 
 		}
 		GLfloat const timePlot = glfwGetTime() - timeBeforePlot;
-		//std::cout << "time for plot : " << timePlot << std::endl;
+		std::cout << "time for plot : " << timePlot << std::endl;
 
 		//float const timeframe = .16666f;
 		//GLfloat timeEndFrame = glfwGetTime();

@@ -1,9 +1,6 @@
-#ifndef AABB_PERSONNEL_H
-#define AABB_PERSONNEL_H
+#pragma once
 
 #include <glm/glm.hpp>
-
-#define DEBUG 0
 
 class AABB{
 	public:
@@ -22,5 +19,3 @@ class AABB{
 		bool intersects(const AABB& box);
 		AABB unionize(AABB& box);
 };
-
-#endif

@@ -1,5 +1,4 @@
-#ifndef MY_BALLS_LIST_HPP
-#define MY_BALLS_LIST_HPP
+#pragma once
 
 #include "balls.hpp"
 
@@ -7,7 +6,6 @@ class BallList{
 	public:
 
 		Ball list[NB_BALL];
-		LooseTree tree;
 		int nbBall;
 
 		BallList();
@@ -24,5 +22,3 @@ class BallList{
 
 		void update(float dt);
 };
-
-#endif

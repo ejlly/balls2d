@@ -1,5 +1,4 @@
-#ifndef MY_CAMERA_OPENGL_HPP
-#define MY_CAMERA_OPENGL_HPP
+#pragma once
 
 #include <glm/glm.hpp>
 
@@ -41,5 +40,3 @@ class Camera{
 		void update();
 
 };
-
-#endif

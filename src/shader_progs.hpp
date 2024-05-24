@@ -1,5 +1,4 @@
-#ifndef MY_SHADER_PROGS_OPENGL
-#define MY_SHADER_PROGS_OPENGL
+#pragma once
 
 #define GLEW_STATIC
 #include <GL/glew.h>
@@ -67,5 +66,3 @@ class ComputeProgram : public Program{
 
 		void compute(int g_x, int g_y, int g_z);
 };
-
-#endif
