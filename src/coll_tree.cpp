@@ -1,5 +1,6 @@
 #include "coll_tree.hpp"
 #include <iostream>
+#define DEBUG 1
 
 
 Node::Node(){
@@ -207,6 +208,7 @@ void LooseTree::removeNode(Node *node){
 }
 
 void LooseTree::computePairs(){
+	std::cout << "Computing pairs\n";
 	m_collisions.clear();
 	if(!m_root || m_root->isLeaf())
 		return;
@@ -216,6 +218,7 @@ void LooseTree::computePairs(){
 
 	// base recursive call
 	computePairsHelper(m_root->fils[0], m_root->fils[1]);
+	std::cout << "pairs computed\n";
 }
 
 void LooseTree::clearChildrenCrossFlagHelper(Node *node){

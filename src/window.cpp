@@ -1,12 +1,12 @@
 #include <iostream>
-#include <stdlib.h>
+#include <cstdlib>
 #include <fstream>
 #include <algorithm>
 #include <sstream>
 #include <vector>
-#include <stdlib.h>
-#include <string.h>
-#include <unistd.h>
+#include <cstring>
+
+#include <unistd.h> //why ?
 
 // GLEW
 #define GLEW_STATIC
@@ -153,6 +153,7 @@ int main(){
 	
 	GLfloat lastTime = glfwGetTime();
 	GLfloat addTime = 9e-2;
+	GLint nbBall = 2500;
 	GLfloat lastAddTime = lastTime;
 
 
@@ -160,6 +161,7 @@ int main(){
 
     // Game loop
 	int add_time = 0;
+	int respec_tree_time = 0;
     while(!glfwWindowShouldClose(win.getaddr())){
         glfwPollEvents();
 		GLfloat timeValue = glfwGetTime();
@@ -176,12 +178,17 @@ int main(){
 
 		shaderProgram.use();
 
-		if(add_time > 3){
+		if(add_time > 3 && maListe.nbBall < nbBall){
 			maListe.addBall(10);
 			add_time = 0;
 		}
 		add_time++;
-		
+
+		if(respec_tree_time > 100){
+			maListe.tree.update();
+			respec_tree_time = 0;
+		}
+		respec_tree_time++;	
 
 		GLfloat const timeBeforeUpdate = glfwGetTime();
 		maListe.update(2e-2f);

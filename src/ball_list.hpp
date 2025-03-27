@@ -1,16 +1,17 @@
 #pragma once
 
 #include "balls.hpp"
+#include <vector>
 
 class BallList{
 	public:
 
-		Ball list[NB_BALL];
+		std::vector<Ball> list;
 		int nbBall;
 
-		BallList();
+		LooseTree tree;
 
-		Ball* get_list();
+		BallList();
 
 		void addBall(int k);
 

@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.2 FATAL_ERROR)
 project(balls2d)
 set(CMAKE_MODULE_PATH /home/charles/Libs/cmake)
-set (CMAKE_CXX_STANDARD 17)
+set (CMAKE_CXX_STANDARD 20)
 
 # Add source files
 file(GLOB_RECURSE SOURCE_FILES 
@@ -51,7 +51,7 @@ set(GLM_INCLUDE_PATH "" CACHE PATH "The directory that contains glm/glm.hpp" )
 #message(STATUS "Found GLFW3 in ${GLFW3_INCLUDE_DIR}")
 #
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pthread -O2")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pthread -O2 -g")
 
 # Put all libraries into a variable
 set(LIBS glfw GL GLEW)

@@ -5,8 +5,6 @@
 #include "aabb.hpp"
 #include "coll_tree.hpp"
 
-#include <vector>
-
 // GFLW
 #include <GLFW/glfw3.h>
 

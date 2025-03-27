@@ -41,6 +41,19 @@ class Node{
 };
 
 class LooseTree{
+	private:
+		void insertNode(Node* node, Node** parent);
+
+		void removeNode(Node* node);
+
+		void updateInvalids(Node* nodes);
+
+		void clearChildrenCrossFlagHelper(Node *node);
+		void crossChildren(Node *node);
+		void computePairsHelper(Node *n0, Node *n1);
+
+		void print_aux(Node *node, int cur_size);
+
 	public:
 		Node* m_root;
 		std::vector<Pair_Ball> m_collisions;
@@ -59,17 +72,4 @@ class LooseTree{
 		void computePairs();
 
 		void print();
-
-	private:
-		void insertNode(Node* node, Node** parent);
-
-		void removeNode(Node* node);
-
-		void updateInvalids(Node* nodes);
-
-		void clearChildrenCrossFlagHelper(Node *node);
-		void crossChildren(Node *node);
-		void computePairsHelper(Node *n0, Node *n1);
-
-		void print_aux(Node *node, int cur_size);
 };

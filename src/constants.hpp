@@ -6,7 +6,6 @@
 // GLM
 #include <glm/glm.hpp>
 
-#define NB_BALL 3000
 #define CENTER_GRAV 0
 #define GLOBAL_SIZE (.02f)
 
