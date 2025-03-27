@@ -10,3 +10,4 @@ CTestTestfile.cmake
 _deps
 tags
 balls2d
+.vscode/
