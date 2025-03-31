@@ -32,6 +32,7 @@ class Node{
 	bool childrenCrossed;
 
 	Node();
+	~Node();
 
 	bool isLeaf() const;
 	void setChildren(Node& n0, Node& n1);

@@ -1,38 +1,11 @@
-#include <iostream>
-#include <cstdlib>
-#include <fstream>
-#include <algorithm>
-#include <sstream>
-#include <vector>
-#include <cstring>
-
-#include <unistd.h> //why ?
-
-// GLEW
 #define GLEW_STATIC
 #include <GL/glew.h>
 
-// GLFW
 #include <GLFW/glfw3.h>
+#include <iostream>
+#include "window.hpp"
 
-// GLM
-#include <glm/glm.hpp>
-#include <glm/gtc/matrix_transform.hpp>
-#include <glm/gtc/type_ptr.hpp>
-#include <glm/gtx/norm.hpp>
-
-#define STB_IMAGE_IMPLEMENTATION
-#include "common/stb_image.h"
-
-//Balls
-#include "ball_list.hpp"
-#include "keys.hpp"
-#include "shader_progs.hpp"
-#include "camera.hpp"
-
-// Function prototypes
-const char * GetGLErrorStr(GLenum err)
-{
+const char * GetGLErrorStr(GLenum err) {
     switch (err)
     {
     case GL_NO_ERROR:          return "No error";
@@ -46,7 +19,7 @@ const char * GetGLErrorStr(GLenum err)
     }
 }
 
-void CheckGLError(){
+void CheckGLError() {
 	std::cout << "Checking error\n";
     while(true){
         const GLenum err = glGetError();
@@ -57,26 +30,18 @@ void CheckGLError(){
     }
 }
 
-GLfloat mod_float(GLfloat x, GLfloat mod){
-	int k = (int) (x/mod);
-	return x-k*mod;
-}
-
-int main(){
+Window::Window(int _width, int _height) {
+	width = _width;
+	height = _height;
 
     glfwInit();
-	
-	int const WIDTH = 900, HEIGHT = 900;
-	Window win(WIDTH, HEIGHT);
+
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
     glfwWindowHint(GLFW_RESIZABLE, GL_TRUE);
 
-	GLFWwindow *window(win.getaddr());
-
-    window = glfwCreateWindow(WIDTH, HEIGHT, "Balls", nullptr, nullptr);
-	win.setWindow(window);
+    window = glfwCreateWindow(width, height, "Balls", nullptr, nullptr);
     glfwMakeContextCurrent(window);
 
     glfwSetKeyCallback(window, key_callback);
@@ -84,154 +49,185 @@ int main(){
 
     glewExperimental = GL_TRUE;
     glewInit();
-    glViewport(0, 0, WIDTH, HEIGHT);
+    glViewport(0, 0, width, height);
 
-	Camera cam(win);
+	cam = Camera(window);
 
-	DrawingProgram shaderProgram("src/shaders/boidShader.vs", "src/shaders/boidShader.fs");
-    // Set up vertex data (and buffer(s)) and attribute pointers
+	shaderProgram.init("src/shaders/boidShader.vs", "src/shaders/boidShader.fs");
+}
 
-	int const NB_POINTS_CIRCLE = 30;
+Window::Window() {
+	Window(1500, 900);
+}
 
-    GLfloat vertices[3*(NB_POINTS_CIRCLE+1)] = {0.f, 0.f, 0.f};
-	//Gen circle coordinates
-	
-	GLfloat theta = 2*glm::pi<GLfloat>()/NB_POINTS_CIRCLE;
-	GLuint indices[3*NB_POINTS_CIRCLE];
+Window::~Window() {
+	freeInstanceBuffers();
+	glfwDestroyWindow(window);
+	glfwTerminate();
+}
 
-	GLuint edge_indices[] = {
-		0, 1,
-		1, 2,
-		2, 3,
-		3, 0,
-		0, 4,
-		1, 4,
-		2, 4,
-		3, 4
-	};
+GLFWwindow* Window::getAddr() {
+	return window;
+}
 
-	for(int i(0); i<NB_POINTS_CIRCLE; i++){
-		vertices[3*(i+1)]     = glm::cos(i*theta);
-		vertices[3*(i+1) + 1] = glm::sin(i*theta);
-		vertices[3*(i+1) + 2] = 0.f;
-		
-		indices[3*i]     = 0;
-		indices[3*i + 1] = i+1;
-		indices[3*i + 2] = (i == NB_POINTS_CIRCLE - 1)?1:(i+2);
-	}
-	
-	int const NB_EBOS = 1;
+void Window::setWindow(GLFWwindow* _window) {
+	window = _window;
+}
 
-    GLuint EBOs[NB_EBOS], VBOs[NB_EBOS], VAOs[NB_EBOS];
-    glGenVertexArrays(NB_EBOS, VAOs);
-    glGenBuffers(NB_EBOS, VBOs);
-	glGenBuffers(NB_EBOS, EBOs);
+int Window::getWidth() {
+	return width;
+}
 
+int Window::getHeight() {
+	return height;
+}
 
-	//Polyedra
-    glBindVertexArray(VAOs[0]);
+void Window::generateInstanceBuffers() {
+	std::vector<GLfloat> vertices = engine.genVertices();
+	std::vector<GLuint> indices = engine.genIndices();
 
-    glBindBuffer(GL_ARRAY_BUFFER, VBOs[0]);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3*sizeof(GLfloat), (GLvoid*) 0);
-    glEnableVertexAttribArray(0);
+    glGenVertexArrays(1, &VAO);
+    glGenBuffers(1, &VBO);
+	glGenBuffers(1, &EBO);
+	glGenBuffers(1, &instanceModelVBO);
+	glGenBuffers(1, &instanceColorVBO);
 
+	//TODO: if different radii for each ball, add a radius buffer
 
+	glBindVertexArray(VAO);
 
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBOs[0]);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
+	//Vertex
+	glBindBuffer(GL_ARRAY_BUFFER, VBO);
+	glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(GLfloat), vertices.data(), GL_STATIC_DRAW);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3*sizeof(GLfloat), (GLvoid*) 0);
+	glEnableVertexAttribArray(0);
+
+	//Index
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(GLuint), indices.data(), GL_STATIC_DRAW);
+
+    //Instance position buffer
+    glBindBuffer(GL_ARRAY_BUFFER, instanceModelVBO);
+    glBufferData(GL_ARRAY_BUFFER, 0, nullptr, GL_DYNAMIC_DRAW);
+    glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, sizeof(glm::mat4), (GLvoid*) 0);
     glEnableVertexAttribArray(1);
-	
+    glVertexAttribDivisor(1, 1);
+
+    //Instance color buffer
+    glBindBuffer(GL_ARRAY_BUFFER, instanceColorVBO);
+    glBufferData(GL_ARRAY_BUFFER, 0, nullptr, GL_DYNAMIC_DRAW);
+    glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, sizeof(glm::vec3), (GLvoid*) 0);
+    glEnableVertexAttribArray(2);
+    glVertexAttribDivisor(2, 1);
+
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
-    glBindVertexArray(0); // Unbind VAO
+	glBindVertexArray(0);
+}
 
-    glBindVertexArray(0); // Unbind VAO
+void Window::updateInstanceBuffer(const std::vector<glm::mat4>& instanceModels, const std::vector<glm::vec3>& instanceColors) {
+    glBindBuffer(GL_ARRAY_BUFFER, instanceModelVBO);
+    static size_t instanceModelBufferSize = 0;
+    size_t newModelBufferSize = instanceModels.size() * sizeof(glm::mat4);
+    //if (newModelBufferSize != instanceModelBufferSize) {
+	if (true) {
+        glBufferData(GL_ARRAY_BUFFER, newModelBufferSize, instanceModels.data(), GL_DYNAMIC_DRAW);
+        instanceModelBufferSize = newModelBufferSize;
+    }
+	else
+        glBufferSubData(GL_ARRAY_BUFFER, 0, newModelBufferSize, instanceModels.data());
 
+    glBindBuffer(GL_ARRAY_BUFFER, instanceColorVBO);
+    static size_t instanceColorBufferSize = 0;
+    size_t newColorBufferSize = instanceColors.size() * sizeof(glm::vec3);
+    //if (newColorBufferSize != instanceColorBufferSize) {
+	if (true) {
+        glBufferData(GL_ARRAY_BUFFER, newColorBufferSize, instanceColors.data(), GL_DYNAMIC_DRAW);
+        instanceColorBufferSize = newColorBufferSize;
+    }
+	else
+        glBufferSubData(GL_ARRAY_BUFFER, 0, newColorBufferSize, instanceColors.data());
 
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+}
 
-	BallList maListe;
+void Window::render() {
+	// Clear color buffer
+	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+	shaderProgram.use();
+
+	int const n = engine.getNbPointsCircle(),
+			  m = engine.getNbBalls();
+
+	glBindVertexArray(VAO);
+	glDrawElementsInstanced(GL_TRIANGLES, static_cast<GLuint>(3*(n+1)), GL_UNSIGNED_INT, 0, m);
+	glBindVertexArray(0);
+
+	glDepthFunc(GL_LEQUAL); 
+
+	// Swap the screen buffers
+	glfwSwapBuffers(window);
+}
+
+void Window::freeInstanceBuffers() {
+	glDeleteBuffers(1, &VBO);
+	glDeleteBuffers(1, &EBO);
+	glDeleteBuffers(1, &instanceModelVBO);
+	glDeleteBuffers(1, &instanceColorVBO);
+	glDeleteVertexArrays(1, &VAO);
+}
+
+void Window::runLoop() {
+
+	//engine.addBall(1);
+
+	std::vector<glm::mat4> models;
+	glm::mat4 model(1.0f);
 	
-	GLfloat lastTime = glfwGetTime();
-	GLfloat addTime = 9e-2;
-	GLint nbBall = 2500;
-	GLfloat lastAddTime = lastTime;
+	glm::mat4 resize(1.0f);
 
+	resize[0][0] = .4f;
+	resize[1][1] = .4f;
 
-	bool pause=false;
+	model = glm::translate(model, glm::vec3(0.f));
 
-    // Game loop
-	int add_time = 0;
-	int respec_tree_time = 0;
-    while(!glfwWindowShouldClose(win.getaddr())){
+	model = model * resize;
+	models.push_back(model);
+
+	std::vector<glm::vec3> colors;
+	colors.push_back(glm::vec3(1.0f, .0f, .5f));
+
+	int const n = engine.getNbPointsCircle();
+	engine.addBall(1);
+
+    while(!glfwWindowShouldClose(window)){
         glfwPollEvents();
-		GLfloat timeValue = glfwGetTime();
-		//GLfloat dt = timeValue - lastTime;
-		//lastTime = timeValue;
+		//engine.update();
 
-        // Clear the colorbuffer
-
+		//updateInstanceBuffer(engine.getModels(), engine.getColors());
+		//updateInstanceBuffer(models, colors);
+		//render();
 
 
 		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-		
 
 		shaderProgram.use();
-
-		if(add_time > 3 && maListe.nbBall < nbBall){
-			maListe.addBall(10);
-			add_time = 0;
-		}
-		add_time++;
-
-		if(respec_tree_time > 100){
-			maListe.tree.update();
-			respec_tree_time = 0;
-		}
-		respec_tree_time++;	
-
-		GLfloat const timeBeforeUpdate = glfwGetTime();
-		maListe.update(2e-2f);
-		GLfloat const timeUpdate = glfwGetTime() - timeBeforeUpdate;
-
-		std::cout << "time for update : " << timeUpdate << std::endl;
-
-
-		GLfloat const timeBeforePlot = glfwGetTime();
-		for(int i(0); i < maListe.nbBall; i++){
-			Ball& ball = maListe.list[i];
+		for(int i(0); i < engine.maListe.nbBall; i++){
+			Ball& ball = engine.maListe.list[i];
 			shaderProgram.uniform_4x4("model", 1, GL_FALSE, glm::value_ptr(ball.get_model()));
 			shaderProgram.uniform_3f("color", 1, glm::value_ptr(ball.color));
-			//std::cout << glm::length2(ball.speed) << " " << ball.pos.x << " " << ball.pos.y;
+			std::cout << glm::length2(ball.speed) << " " << ball.pos.x << " " << ball.pos.y;
 			//Draw the structure
-			glBindVertexArray(VAOs[0]);
-			glDrawElements(GL_TRIANGLES, 3*(NB_POINTS_CIRCLE+1), GL_UNSIGNED_INT, 0);
+			glBindVertexArray(VAO);
+			glDrawElements(GL_TRIANGLES, 3*(n+1), GL_UNSIGNED_INT, 0);
 
 			glBindVertexArray(0);
 
 			glDepthFunc(GL_LEQUAL); 
+			glfwSwapBuffers(window);
 		}
-		GLfloat const timePlot = glfwGetTime() - timeBeforePlot;
-		std::cout << "time for plot : " << timePlot << std::endl;
-
-		//float const timeframe = .16666f;
-		//GLfloat timeEndFrame = glfwGetTime();
-		//float const timeframe = .1f;
-
-		//float timeTaken = timeEndFrame - timeValue;
-		
-		//std::cout << "\t" << timeTaken << std::endl;
-
-
-		//if(timeframe - timeTaken > 0) sleep(timeframe - timeTaken);
-
-		// Swap the screen buffers
-		glfwSwapBuffers(win.getaddr());
+		std::cout << std::endl;
     }
-    glDeleteVertexArrays(NB_EBOS, VAOs);
-    glDeleteBuffers(NB_EBOS, VBOs);
-	glDeleteBuffers(NB_EBOS, EBOs);
-
-    glfwTerminate();
-    return 0;
 }

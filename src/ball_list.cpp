@@ -68,8 +68,6 @@ void BallList::threaded_collision(std::vector<Ball*>& balls){
 			GLfloat const sumRadius = ball1.radius + ball2.radius;
 			GLfloat const dist2 = glm::length2(centerVector);
 
-
-
 			if(dist2 < sumRadius*sumRadius){
 				GLfloat const dist = sqrt(dist2);
 				ball1.pos = ball1.pos + .75f*centerVector*(sumRadius - dist)/(2.f*dist);
@@ -130,6 +128,6 @@ void BallList::subUpdate(float sub_dt){
 }
 
 void BallList::update(float dt){
-	this->updateCollisions(dt, 8);
+	//this->updateCollisions(dt, 8);
 	std::cout << "Done update !\n";
 }

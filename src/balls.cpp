@@ -1,7 +1,7 @@
 #include "balls.hpp"
 
 #include <math.h>
-#include <thread>
+//#include <thread>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtx/norm.hpp>
 #include <iostream>
@@ -22,7 +22,7 @@ Ball::Ball(){
 	color = glm::vec3(1.0f, 0.f, 0.f);
 
 	respective_node = nullptr;
-	updateBox();
+	//updateBox();
 }
 
 Ball::Ball(glm::vec3 pos, glm::vec3 speed){
@@ -34,7 +34,7 @@ Ball::Ball(glm::vec3 pos, glm::vec3 speed){
 	color = glm::vec3(1.0f, 0.f, 0.f);
 
 	respective_node = nullptr;
-	updateBox();
+	//updateBox();
 }
 
 Ball::Ball(glm::vec3 pos, glm::vec3 speed, glm::vec3 color){
@@ -46,7 +46,7 @@ Ball::Ball(glm::vec3 pos, glm::vec3 speed, glm::vec3 color){
 	this->color = color;
 
 	respective_node = nullptr;
-	updateBox();
+	//updateBox();
 }
 
 void Ball::updateBox(){
@@ -130,7 +130,7 @@ void Ball::integrate(float dt){
 	accel = new_accel;
 	
 	//speed = .98f * speed;
-	updateBox();
+	//updateBox();
 }
 
 glm::mat4 Ball::get_model(){

@@ -1,6 +1,6 @@
 #include "coll_tree.hpp"
 #include <iostream>
-#define DEBUG 1
+#define DEBUG 0
 
 
 Node::Node(){
@@ -8,6 +8,11 @@ Node::Node(){
 	fils[0] = nullptr;
 	fils[1] = nullptr;
 	ball = nullptr;
+}
+
+Node::~Node() {
+	delete fils[0];
+	delete fils[1];
 }
 
 bool Node::isLeaf() const{

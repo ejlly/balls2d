@@ -11,13 +11,13 @@ GLuint Program::loadShader(char const *shader_file_path, GLenum shaderType){
 	
 	std::string shaderCodeString;
 	std::ifstream shaderFile(shader_file_path, std::ios::in);
-	if(shaderFile.is_open()){
+	if (shaderFile.is_open()) {
 		std::stringstream shaderStream;
 		shaderStream << shaderFile.rdbuf();
 		shaderCodeString = shaderStream.str();
 		shaderFile.close();
 	}
-	else{
+	else {
 		std::string error;
 		error = std::string("Impossible to open file : ") + shader_file_path + "\n";
 		throw std::invalid_argument(error);
@@ -48,11 +48,16 @@ GLuint Program::loadShader(char const *shader_file_path, GLenum shaderType){
 }
 
 Program::~Program(){
+	std::cout << "Deleted Program\n";
 	glDeleteProgram(programID);
 }
 
 void Program::use(){
 	glUseProgram(programID);
+}
+
+GLuint Program::getID() const{
+	return programID;
 }
 
 //floats
@@ -262,6 +267,14 @@ void Program::uniform_4x3(const char *name, GLsizei count, GLboolean transpose, 
 
 
 DrawingProgram::DrawingProgram(char const *vs, char const *fs){
+	init(vs, fs);
+}
+
+DrawingProgram::DrawingProgram() {
+	programID = 0;
+}
+
+void DrawingProgram::init(char const* vs, char const *fs) {
 	GLuint vsID = loadShader(vs, GL_VERTEX_SHADER);
 	GLuint fsID = loadShader(fs, GL_FRAGMENT_SHADER);
 

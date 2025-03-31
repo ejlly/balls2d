@@ -1,25 +1,11 @@
 #pragma once
 
+#include <GLFW/glfw3.h>
 #include <glm/glm.hpp>
-
-class Window{
-	private:
-		GLFWwindow *window;
-		int width, height;
-	
-	public:
-		Window(int _width, int _height);
-		Window();
-
-		GLFWwindow* getaddr();
-		void setWindow(GLFWwindow* _window);
-		int getwidth();
-		int getheight();
-};
 
 class Camera{
 	private:
-		Window window;
+		GLFWwindow* window;
 		glm::vec3 position;
 		float hAngle;
 		float vAngle;
@@ -32,11 +18,11 @@ class Camera{
 		double lastTime;
 
 	public:
-		Camera(Window _window);
+		Camera(GLFWwindow* _window=nullptr);
 
 		glm::mat4 getViewMatrix();
 		glm::mat4 getProjectionMatrix();
 
-		void update();
+		void update(int const width, int const height);
 
 };

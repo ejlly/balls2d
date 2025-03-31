@@ -1,6 +1,7 @@
 #pragma once
 
 #include "balls.hpp"
+#include "coll_tree.hpp"
 #include <vector>
 
 class BallList{

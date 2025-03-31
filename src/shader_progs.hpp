@@ -10,6 +10,7 @@ class Program{
 
 	public:
 		void use();
+		GLuint getID() const;
 		~Program();
 		//floats
 		void uniformf(const char *name, GLfloat v0);
@@ -58,6 +59,9 @@ class Program{
 class DrawingProgram : public Program{
 	public:
 		DrawingProgram(char const *vs, char const *fs);
+		DrawingProgram();
+
+		void init(char const *vs, char const *fs);
 };
 
 class ComputeProgram : public Program{
