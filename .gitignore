@@ -11,4 +11,5 @@ _deps
 tags
 balls2d
 .vscode/
+.build/
 .gdbinit

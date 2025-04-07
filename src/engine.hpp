@@ -39,10 +39,9 @@ class Engine {
         GLfloat getAngle();
 
         GLfloat lastTime, addTime, lastAddTime;
-        GLint nbBall, respec_tree_time;
+        GLint respec_tree_time;
     
     public:
-        BallList maListe;
         Engine(int _nb_points_circle=30);
 
         std::vector<GLfloat> genVertices();
@@ -52,10 +51,7 @@ class Engine {
         std::vector<glm::mat4> getModels();
         std::vector<glm::vec3> getColors();
 
-        void addBall(int _nbBall);
-
         int getNbPointsCircle() const;
-        int getNbBalls() const;
-        
-        void update();
+
+        int update();
 };

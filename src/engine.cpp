@@ -13,18 +13,16 @@
 
 #include "engine.hpp"
 
-
-GLfloat Engine::getAngle(){
-	return 2 * (glm::pi<GLfloat>()) / nb_points_circle;
-}
-
 Engine::Engine(int _nb_points_circle) {
 	nb_points_circle = _nb_points_circle;
 
 	lastTime = glfwGetTime();
 	addTime = 9e-2;
-	nbBall = 2500;
 	lastAddTime = lastTime;
+}
+
+GLfloat Engine::getAngle(){
+	return 2 * (glm::pi<GLfloat>()) / nb_points_circle;
 }
 
 
@@ -53,67 +51,24 @@ std::vector<GLuint> Engine::genIndices() {
 	return indices;
 }
 
-std::vector<glm::vec3> Engine::getPositions() {
-	positions.resize(maListe.nbBall, glm::vec3(0));
-	for(int i(0); i < maListe.nbBall; i++){
-		Ball& ball = maListe.list[i];
-		positions[i] = ball.pos;
-	}
-	return positions;
-}
-
-std::vector<glm::mat4> Engine::getModels() {
-	std::vector<glm::mat4> models(maListe.nbBall, glm::mat4(1));
-	for(int i(0); i < maListe.nbBall; i++){
-		Ball& ball = maListe.list[i];
-		models[i] = ball.get_model();
-	}
-	return models;
-}
-
-std::vector<glm::vec3> Engine::getColors() {
-	colors.resize(maListe.nbBall, glm::vec3(0));
-	for(int i(0); i < maListe.nbBall; i++){
-		Ball& ball = maListe.list[i];
-		colors[i] = ball.color;
-	}
-	return colors;
-}
-
 int Engine::getNbPointsCircle() const {
 	return nb_points_circle;
 }
 
-int Engine::getNbBalls() const {
-	return maListe.nbBall;
-}
-
-void Engine::addBall(int _nbBall) {
-	maListe.addBall(_nbBall);
-}
-
-void Engine::update() {
+int Engine::update() {
 	GLfloat timeValue = glfwGetTime();
 	//GLfloat dt = timeValue - lastTime;
 	//lastTime = timeValue;
+	int retValue = 0;
 
 
-	if(addTime > 3 && maListe.nbBall < nbBall){
-		maListe.addBall(10);
+	if(addTime > 3){
+		retValue = 10;
 		addTime = 0;
 	}
 	addTime++;
 
-	std::cout << "nb ball : " << maListe.nbBall << std::endl;
-
-	if(respec_tree_time > 100){
-		maListe.tree.update();
-		respec_tree_time = 0;
-	}
-	respec_tree_time++;	
-
 	GLfloat const timeBeforeUpdate = glfwGetTime();
-	//maListe.update(2e-2f);
 	GLfloat const timeUpdate = glfwGetTime() - timeBeforeUpdate;
 
 	std::cout << "time for update : " << timeUpdate << std::endl;
@@ -140,4 +95,6 @@ void Engine::update() {
 
 
 	//if(timeframe - timeTaken > 0) sleep(timeframe - timeTaken);
+
+	return retValue;
 }

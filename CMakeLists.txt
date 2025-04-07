@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.2 FATAL_ERROR)
+cmake_minimum_required(VERSION 3.5 FATAL_ERROR)
 project(balls2d)
 set(CMAKE_MODULE_PATH /home/charles/Libs/cmake)
 set (CMAKE_CXX_STANDARD 20)
@@ -18,8 +18,8 @@ file(GLOB_RECURSE HEADER_FILES
 
 
 # Configure assets header file
-configure_file(src/helpers/RootDir.h.in src/helpers/RootDir.h)
-include_directories(${CMAKE_BINARY_DIR}/src)
+# configure_file(src/helpers/RootDir.h.in src/helpers/RootDir.h)
+# include_directories(${CMAKE_BINARY_DIR}/src)
 
 
 # Define the executable

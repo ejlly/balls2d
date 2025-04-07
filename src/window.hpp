@@ -7,7 +7,7 @@
 #include <GLFW/glfw3.h>
 
 #include "engine.hpp"
-#include "camera.hpp"
+//#include "camera.hpp"
 #include "shader_progs.hpp"
 
 class Window {
@@ -15,13 +15,15 @@ class Window {
 		GLFWwindow *window;
 		int width, height;
 
-        GLuint VAO, VBO, EBO, instanceModelVBO, instanceColorVBO;
-
-		Camera cam;
+        GLuint VAO, VBO, EBO;
 
         DrawingProgram shaderProgram;
 
+		GLuint nbBall;      
+
         Engine engine;
+
+        BallList maListe;
 	
 	public:
 		Window(int _width, int _height);
@@ -36,7 +38,7 @@ class Window {
 
         void generateInstanceBuffers();
 
-        void updateInstanceBuffer(const std::vector<glm::mat4>& instanceModels, const std::vector<glm::vec3>& instanceColors);
+        void updateUniforms(const glm::mat4& instanceModel, const glm::vec3& instanceColor);
 
         void freeInstanceBuffers();
         

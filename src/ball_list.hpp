@@ -1,7 +1,7 @@
 #pragma once
 
 #include "balls.hpp"
-#include "coll_tree.hpp"
+//#include "coll_tree.hpp"
 #include <vector>
 
 class BallList{
@@ -10,9 +10,12 @@ class BallList{
 		std::vector<Ball> list;
 		int nbBall;
 
-		LooseTree tree;
+		//LooseTree tree;
 
 		BallList();
+
+		int getNbBalls() const;
+		Ball& getBall(int i);
 
 		void addBall(int k);
 

@@ -8,8 +8,17 @@
 BallList::BallList(){
 	list.push_back(Ball(glm::vec3(-.7f, .0f, 0.f), glm::vec3(0.f, .3f, 0.f)));
 	//list.push_back(Ball(glm::vec3(-.9f, .8f, 0.f), glm::vec3(0.f, 0.f, 0.f)));
-	tree.add(&(list[0]));
+	//tree.add(&(list[0]));
 	nbBall = 1;
+}
+
+int BallList::getNbBalls() const {
+	return nbBall;
+}
+
+Ball& BallList::getBall(int i){
+	if(i >= nbBall) return list[0];
+	return list[i];
 }
 
 void BallList::addBall(int k){
@@ -35,13 +44,13 @@ void BallList::addBall(int k){
 
 #if CENTER_GRAV
 	list[nbBall] = Ball(glm::vec3(-.6f, .0f, 0.f), glm::vec3(0.f, .02f, 0.f), color);
-	tree.add(&(list[nbBall]));
+	//tree.add(&(list[nbBall]));
 	nbBall++;
 #else
 	for(int i(0); i<k; i++){
 		//std::cout << nbBall << std::endl;
 		list.push_back(Ball(glm::vec3(-.6f, i*.1f, 0.f), glm::vec3(2.f, .5f, 0.f), color));
-		tree.add(&(list[nbBall]));
+		//tree.add(&(list[nbBall]));
 		nbBall++;
 	}
 #endif
@@ -88,22 +97,8 @@ void BallList::subUpdate(float sub_dt){
 		ball.checkBounds();
 	}
 
-	tree.computePairs();
-	for(auto const& pair: tree.m_collisions){
-		std::cout << "collision\n";
-		Ball* ball1 = pair.fst;
-		Ball* ball2 = pair.snd;
-		glm::vec3 const centerVector = ball1->pos - ball2->pos;
-		GLfloat const sumRadius = ball1->radius + ball2->radius;
-		GLfloat const dist2 = glm::length2(centerVector);
-
-		if(dist2 < sumRadius*sumRadius){
-			GLfloat const dist = sqrt(dist2);
-			ball1->pos = ball1->pos + .75f*centerVector*(sumRadius - dist)/(2.f*dist);
-			ball2->pos = ball2->pos - .75f*centerVector*(sumRadius - dist)/(2.f*dist);
-		}
-	}
-	/*
+	//tree.computePairs();
+	//for(auto const& pair: tree.m_collisions){
 	size_t const size_balls = list.size();
 
 	for(int i(0); i<size_balls; i++){
@@ -124,10 +119,9 @@ void BallList::subUpdate(float sub_dt){
 			}
 		}
 	}
-	*/
 }
 
 void BallList::update(float dt){
-	//this->updateCollisions(dt, 8);
-	std::cout << "Done update !\n";
+	this->updateCollisions(dt, 8);
+	//std::cout << "Done update !\n";
 }

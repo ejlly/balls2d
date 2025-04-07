@@ -143,6 +143,7 @@ glm::mat4 Ball::get_model(){
 	resize[1][1] = radius;
 	//resize[2][2] = radius;
 
+	
 	model = glm::translate(model, pos);
 
 	model = model * resize;

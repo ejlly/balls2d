@@ -4,11 +4,9 @@
 int main() {
 	int const width = 900, height = 900;
 
-	Window win(width, height);
+	Window window(width, height);
+	window.generateInstanceBuffers();
+	window.runLoop();
 
-    win.generateInstanceBuffers();
-
-    win.runLoop();
-    
     return 0;
 }
