@@ -3,14 +3,9 @@
 #include <math.h>
 //#include <thread>
 #include <glm/gtc/matrix_transform.hpp>
-#include <glm/gtx/norm.hpp>
 #include <iostream>
 
-#if CENTER_GRAV
 #define TMP_DT (5e-3f)
-#else
-#define TMP_DT (5e-3f)
-#endif
 
 
 Ball::Ball(){
@@ -54,52 +49,52 @@ void Ball::updateBox(){
 }
 
 glm::vec3 Ball::gravity(){
-#if CENTER_GRAV
-	glm::vec3 const force = - pos; 
-	float const dist2 = glm::length2(force);
+	if (CENTER_GRAV) {
+		glm::vec3 const force = - pos; 
+		float const dist2 = glm::dot(force, force);
 
-	//if(dist2 < 1e-3f) return glm::vec3(0.f);
+		//if(dist2 < 1e-3f) return glm::vec3(0.f);
 
-	return 2.f*force/(glm::length2(force) + 1e-7f);
-#else
-	if((pos.x < -1.f + radius) || (pos.y < -1.f + radius) || (pos.x > 1.f - radius) || (pos.y > 1.f - radius))
-		return glm::vec3(0.f);
+		return 2.f*force/(glm::dot(force, force) + 1e-7f);
+	}
+	else {
+		if((pos.x < -1.f + radius) || (pos.y < -1.f + radius) || (pos.x > 1.f - radius) || (pos.y > 1.f - radius))
+			return glm::vec3(0.f);
 
-	return G;
-#endif
+		return G;
+	}
 }
 
 void Ball::checkBounds(){
-#if !CENTER_GRAV
-	if(pos.x < -1.f + radius){
-		speed.x = -speed.x;
-		speed = rebounce_factor * speed;
-		pos.x = -1.f + radius;
+	if (!CENTER_GRAV) {
+		if(pos.x < -1.f + radius){
+			speed.x = -speed.x;
+			speed = rebounce_factor * speed;
+			pos.x = -1.f + radius;
+		}
+		if(pos.y < -1.f + radius){
+			speed.y = -speed.y;
+			speed = rebounce_factor * speed;
+			pos.y = -1.f + radius;
+		}
+		if(pos.x > 1.f - radius){
+			speed.x = -speed.x;
+			speed = rebounce_factor * speed;
+			pos.x = 1.f - radius;
+		}
+		if(pos.y > 1.f - radius){
+			speed.y = -speed.y;
+			speed = rebounce_factor * speed;
+			pos.y = 1.f - radius;
+		}
 	}
-	if(pos.y < -1.f + radius){
-		speed.y = -speed.y;
-		speed = rebounce_factor * speed;
-		pos.y = -1.f + radius;
-	}
-	if(pos.x > 1.f - radius){
-		speed.x = -speed.x;
-		speed = rebounce_factor * speed;
-		pos.x = 1.f - radius;
-	}
-	if(pos.y > 1.f - radius){
-		speed.y = -speed.y;
-		speed = rebounce_factor * speed;
-		pos.y = 1.f - radius;
-	}
-#endif
-	//std::cout << speed.x << " " << speed.y << " -> " << glm::length2(speed) + pos.y*g << std::endl;
-	
+	//std::cout << speed.x << " " << speed.y << " -> " << glm::dot(speed, speed) + pos.y*g << std::endl;
 }
 
 bool Ball::collides(Ball &b){
 	glm::vec3 const centerVector = pos - b.pos;
 	GLfloat const sumRadius = radius + b.radius;
-	GLfloat const dist2 = glm::length2(centerVector);
+	GLfloat const dist2 = glm::dot(centerVector, centerVector);
 
 	return dist2 < sumRadius*sumRadius;
 }
@@ -110,7 +105,7 @@ bool Ball::coll_update(Ball &b){
 
 	GLfloat const sumRadius = radius + b.radius;
 	glm::vec3 const centerVector = pos - b.pos;
-	GLfloat const dist2 = glm::length2(centerVector);
+	GLfloat const dist2 = glm::dot(centerVector, centerVector);
 
 	if(dist2 < sumRadius*sumRadius){
 		GLfloat const dist = sqrt(dist2);

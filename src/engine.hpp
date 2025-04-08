@@ -1,32 +1,13 @@
 #pragma once
 
 #include <iostream>
-#include <cstdlib>
-#include <fstream>
-#include <algorithm>
-#include <sstream>
 #include <vector>
-#include <cstring>
-
-#include <unistd.h> //why ?
-
-// GLEW
-#define GLEW_STATIC
-#include <GL/glew.h>
-
-// GLFW
-#include <GLFW/glfw3.h>
 
 // GLM
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
-#include <glm/gtc/type_ptr.hpp>
-#include <glm/gtx/norm.hpp>
 
 //Balls
-#include "ball_list.hpp"
-#include "keys.hpp"
-#include "shader_progs.hpp"
 #include "engine.hpp"
 
 class Engine {

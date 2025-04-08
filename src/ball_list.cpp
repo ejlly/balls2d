@@ -2,7 +2,6 @@
 
 #include <math.h>
 #include <glm/gtc/matrix_transform.hpp>
-#include <glm/gtx/norm.hpp>
 #include <iostream>
 
 BallList::BallList(){
@@ -42,18 +41,19 @@ void BallList::addBall(int k){
 
 	//color = glm::vec3(1.f);
 
-#if CENTER_GRAV
-	list[nbBall] = Ball(glm::vec3(-.6f, .0f, 0.f), glm::vec3(0.f, .02f, 0.f), color);
-	//tree.add(&(list[nbBall]));
-	nbBall++;
-#else
-	for(int i(0); i<k; i++){
-		//std::cout << nbBall << std::endl;
-		list.push_back(Ball(glm::vec3(-.6f, i*.1f, 0.f), glm::vec3(2.f, .5f, 0.f), color));
+	if (CENTER_GRAV) {
+		list[nbBall] = Ball(glm::vec3(-.6f, .0f, 0.f), glm::vec3(0.f, .02f, 0.f), color);
 		//tree.add(&(list[nbBall]));
 		nbBall++;
 	}
-#endif
+	else {
+		for(int i(0); i<k; i++){
+			//std::cout << nbBall << std::endl;
+			list.push_back(Ball(glm::vec3(-.6f, i*.1f, 0.f), glm::vec3(2.f, .5f, 0.f), color));
+			//tree.add(&(list[nbBall]));
+			nbBall++;
+		}
+	}
 //TODO : add update tree
 }
 
@@ -75,7 +75,7 @@ void BallList::threaded_collision(std::vector<Ball*>& balls){
 
 			glm::vec3 const centerVector = ball1.pos - ball2.pos;
 			GLfloat const sumRadius = ball1.radius + ball2.radius;
-			GLfloat const dist2 = glm::length2(centerVector);
+			GLfloat const dist2 = glm::dot(centerVector, centerVector);
 
 			if(dist2 < sumRadius*sumRadius){
 				GLfloat const dist = sqrt(dist2);
@@ -108,7 +108,7 @@ void BallList::subUpdate(float sub_dt){
 
 			glm::vec3 const centerVector = ball1.pos - ball2.pos;
 			GLfloat const sumRadius = ball1.radius + ball2.radius;
-			GLfloat const dist2 = glm::length2(centerVector);
+			GLfloat const dist2 = glm::dot(centerVector, centerVector);
 
 
 

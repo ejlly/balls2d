@@ -1,5 +1,4 @@
-#ifndef MY_BALLS_HPP
-#define MY_BALLS_HPP
+#pragma once
 
 #include "constants.hpp"
 #include "aabb.hpp"
@@ -42,5 +41,3 @@ class Ball{
 		glm::mat4 get_model();
 
 };
-
-#endif

@@ -6,9 +6,11 @@
 
 #include <GLFW/glfw3.h>
 
+#include "ball_list.hpp"
 #include "engine.hpp"
 //#include "camera.hpp"
 #include "shader_progs.hpp"
+#include "keyboard.hpp"
 
 class Window {
 	private:

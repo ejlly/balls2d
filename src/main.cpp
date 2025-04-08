@@ -1,7 +1,9 @@
-#include "shader_progs.hpp"
 #include "window.hpp"
+#include "constants.hpp"
 
 int main() {
+	loadConstants("constants.ini");
+
 	int const width = 900, height = 900;
 
 	Window window(width, height);

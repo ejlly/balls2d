@@ -1,10 +1,7 @@
-#define GLEW_STATIC
-#include <GL/glew.h>
-
-#include <GLFW/glfw3.h>
-#include <iostream>
-#include <glm/gtx/string_cast.hpp>
 #include "window.hpp"
+
+#include <glm/gtc/type_ptr.hpp>
+#include <iostream>
 
 const char * GetGLErrorStr(GLenum err) {
     switch (err)
@@ -174,7 +171,16 @@ void Window::runLoop() {
 		int add_number = engine.update();
  		if (maListe.nbBall < nbBall)
 			maListe.addBall(add_number);
+
+		GLfloat const timeBeforeUpdate = glfwGetTime();
 		maListe.update(2e-2f);
+		GLfloat const timeUpdate = glfwGetTime() - timeBeforeUpdate;
+		std::cout << "time for update : " << timeUpdate << std::endl;
+
+
+		GLfloat const timeBeforePlot = glfwGetTime();
 		render();
+		GLfloat const timePlot = glfwGetTime() - timeBeforePlot;
+		std::cout << "time for plot : " << timePlot << std::endl;
     }
 }

@@ -1,15 +1,15 @@
 #pragma once
 
-// GFLW
 #include <GLFW/glfw3.h>
-
-// GLM
 #include <glm/glm.hpp>
 
-#define CENTER_GRAV 0
-#define GLOBAL_SIZE (.02f)
+#include <string>
 
-glm::vec3 const G = glm::vec3(0.f, -1.f, 0.f);
-GLfloat const g = 10.f;
-GLfloat const EPS = 1e-7f;
-GLfloat const rebounce_factor = .9f;
+extern int CENTER_GRAV;
+extern float GLOBAL_SIZE;
+extern glm::vec3 G;
+extern GLfloat g;
+extern GLfloat EPS;
+extern GLfloat rebounce_factor;
+
+void loadConstants(const std::string& iniFilePath);
